@@ -5,7 +5,7 @@
 An end-to-end Machine Learning model deployment project to predict whether a patient is at risk of heart disease based on clinical parameters. This repository contains the source code, preprocessed dataset, trained model, and Flask web API configuration required for deployment on Render.
 
 ## Live Application URL
-**Render App Link:** `[YOUR_DEPLOYED_RENDER_URL_HERE]` *(User to populate this after manual Render deployment)*
+**Render App Link:** `https://heart-disease-prediction-a1j5.onrender.com` 
 
 ---
 
