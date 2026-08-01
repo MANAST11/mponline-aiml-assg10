@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardioAI - Advanced Heart Disease Prediction</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --primary: #4f46e5;
+            --primary-glow: rgba(79, 70, 229, 0.4);
+            --accent-blue: #0ea5e9;
+            --accent-purple: #a855f7;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.3);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.3);
+            --font-primary: 'Outfit', sans-serif;
+            --font-secondary: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 10% 20%, rgba(79, 70, 229, 0.15) 0px, transparent 50%),
+                radial-gradient(at 90% 10%, rgba(14, 165, 233, 0.12) 0px, transparent 50%),
+                radial-gradient(at 50% 80%, rgba(168, 85, 247, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            font-family: var(--font-secondary);
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-family: var(--font-primary);
+            font-weight: 800;
+            font-size: 1.75rem;
+            background: linear-gradient(135deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            color: #38bdf8;
+            -webkit-text-fill-color: initial;
+            filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.5));
+        }
+
+        .github-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 9999px;
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .github-badge:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
+        }
+
+        @media (min-width: 992px) {
+            .main-grid {
+                grid-template-columns: 1.1fr 0.9fr;
+            }
+        }
+
+        /* Glassmorphic Panel styling */
+        .glass-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--primary), var(--accent-purple));
+        }
+
+        h2 {
+            font-family: var(--font-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Form styling */
+        .section-title {
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin: 1.5rem 0 1rem 0;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+        }
+
+        @media (min-width: 576px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .full-width {
+                grid-column: span 2;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        label span.info-icon {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        label span.info-icon:hover {
+            color: var(--accent-blue);
+        }
+
+        /* Custom inputs */
+        input[type="number"], select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: var(--text-main);
+            font-family: var(--font-secondary);
+            font-size: 0.95rem;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        /* Range sliders */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .slider-container input[type="range"] {
+            flex-grow: 1;
+            accent-color: var(--primary);
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .slider-value {
+            font-family: var(--font-primary);
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.25rem 0.6rem;
+            border-radius: 6px;
+            min-width: 45px;
+            text-align: center;
+            font-size: 0.875rem;
+            border: 1px solid var(--card-border);
+        }
+
+        /* Button styling */
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 1rem;
+            font-family: var(--font-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Result Panel styling */
+        .result-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+            min-height: 450px;
+        }
+
+        .result-placeholder {
+            text-align: center;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin: auto 0;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .result-placeholder i {
+            font-size: 4.5rem;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.15));
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-blue);
+            animation: spin 1s ease-in-out infinite;
+            margin: auto;
+        }
+
+        .loading-text {
+            display: none;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+
+        /* Card Results */
+        .result-card {
+            display: none;
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            border: 1px solid transparent;
+            margin: auto 0;
+        }
+
+        .result-card.healthy {
+            background: rgba(16, 185, 129, 0.08);
+            border-color: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 8px 32px var(--success-glow);
+        }
+
+        .result-card.at-risk {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+            box-shadow: 0 8px 32px var(--danger-glow);
+        }
+
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .healthy .result-icon {
+            color: var(--success);
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+        }
+
+        .at-risk .result-icon {
+            color: var(--danger);
+            text-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        .result-title {
+            font-family: var(--font-primary);
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .healthy .result-title {
+            color: var(--success);
+        }
+
+        .at-risk .result-title {
+            color: var(--danger);
+        }
+
+        .result-description {
+            font-size: 0.975rem;
+            color: var(--text-main);
+            margin-bottom: 1.5rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-family: var(--font-primary);
+            font-size: 1.35rem;
+            font-weight: 700;
+        }
+
+        /* Tooltip style */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 250px;
+            background-color: #1e293b;
+            color: #fff;
+            text-align: left;
+            border-radius: 8px;
+            padding: 0.75rem;
+            position: absolute;
+            z-index: 10;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -125px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            border: 1px solid var(--card-border);
+            font-size: 0.75rem;
+            line-height: 1.4;
+            font-weight: normal;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #1e293b transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Animations */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Info items list */
+        .info-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .info-list li i {
+            color: var(--accent-blue);
+            margin-top: 0.25rem;
+        }
+
+        .info-list li strong {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <span>CardioAI</span>
+            </div>
+            <a href="#" class="github-badge" target="_blank" id="githubLink">
+                <i class="fa-brands fa-github"></i>
+                GitHub Repo
+            </a>
+        </header>
+
+        <div class="main-grid">
+            <!-- Form Card -->
+            <div class="glass-panel">
+                <h2>Clinical Parameters Form</h2>
+                <p class="subtitle">Please fill in the patient's diagnostic values below to predict the likelihood of heart disease.</p>
+
+                <form id="predictionForm">
+                    <!-- Section 1: Patient Profile -->
+                    <div class="section-title">
+                        <i class="fa-solid fa-user-doctor"></i> Patient Profile
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label>
+                                Age (Years)
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="age" name="age" min="20" max="90" value="50">
+                                <span class="slider-value" id="ageVal">50</span>
+                            </div>
+                        </div>
+
+                        <!-- Sex -->
+                        <div class="form-group">
+                            <label>
+                                Biological Sex
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Patient's biological sex at birth.</span>
+                                </span>
+                            </label>
+                            <select id="sex" name="sex">
+                                <option value="1">Male</option>
+                                <option value="0">Female</option>
+                            </select>
+                        </div>
+
+                        <!-- Chest Pain Type -->
+                        <div class="form-group full-width">
+                            <label>
+                                Chest Pain Type (CP)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">
+                                        - Typical Angina: Heart-related pain<br>
+                                        - Atypical Angina: Pain not related to heart<br>
+                                        - Non-anginal: Spasms or esophageal pain<br>
+                                        - Asymptomatic: No pain but showing signs
+                                    </span>
+                                </span>
+                            </label>
+                            <select id="cp" name="cp">
+                                <option value="0">Typical Angina</option>
+                                <option value="1">Atypical Angina</option>
+                                <option value="2">Non-anginal Pain</option>
+                                <option value="3">Asymptomatic</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Vitals & Labs -->
+                    <div class="section-title">
+                        <i class="fa-solid fa-gauge-high"></i> Vitals & Lab Diagnostics
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Resting BP -->
+                        <div class="form-group">
+                            <label>
+                                Resting BP (mm Hg)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Resting blood pressure measured in mm Hg upon admission to the hospital.</span>
+                                </span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="trestbps" name="trestbps" min="80" max="200" value="120">
+                                <span class="slider-value" id="trestbpsVal">120</span>
+                            </div>
+                        </div>
+
+                        <!-- Cholesterol -->
+                        <div class="form-group">
+                            <label>
+                                Cholesterol (mg/dl)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Serum cholesterol levels in mg/dl. Normal levels are typically below 200 mg/dl.</span>
+                                </span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="chol" name="chol" min="100" max="500" value="220">
+                                <span class="slider-value" id="cholVal">220</span>
+                            </div>
+                        </div>
+
+                        <!-- Fasting Blood Sugar -->
+                        <div class="form-group">
+                            <label>
+                                Fasting Sugar > 120 mg/dl
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Fasting blood sugar check. True (Yes) if glucose level is above 120 mg/dl.</span>
+                                </span>
+                            </label>
+                            <select id="fbs" name="fbs">
+                                <option value="0">No (≤ 120 mg/dl)</option>
+                                <option value="1">Yes (> 120 mg/dl)</option>
+                            </select>
+                        </div>
+
+                        <!-- Resting ECG -->
+                        <div class="form-group">
+                            <label>
+                                Resting ECG Results
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">
+                                        - Normal: Resting ECG shows no issues<br>
+                                        - ST-T Wave Abnormality: Wave displacement or inversion<br>
+                                        - Left Ventricular Hypertrophy: Probable/definite LVH by Estes' criteria
+                                    </span>
+                                </span>
+                            </label>
+                            <select id="restecg" name="restecg">
+                                <option value="0">Normal</option>
+                                <option value="1">ST-T Wave Abnormality</option>
+                                <option value="2">Left Ventricular Hypertrophy</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Stress & Cardiac Tests -->
+                    <div class="section-title">
+                        <i class="fa-solid fa-heart-circle-bolt"></i> Stress & Cardiac Diagnostics
+                    </div>
+                    
+                    <div class="form-grid">
+                        <!-- Max Heart Rate -->
+                        <div class="form-group">
+                            <label>
+                                Max Heart Rate (thalach)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Maximum heart rate achieved during exercise stress testing.</span>
+                                </span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="thalach" name="thalach" min="60" max="220" value="150">
+                                <span class="slider-value" id="thalachVal">150</span>
+                            </div>
+                        </div>
+
+                        <!-- Exercise Angina -->
+                        <div class="form-group">
+                            <label>
+                                Exercise Induced Angina
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Whether exercise testing induced chest pain (angina).</span>
+                                </span>
+                            </label>
+                            <select id="exang" name="exang">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
+                        </div>
+
+                        <!-- Oldpeak -->
+                        <div class="form-group">
+                            <label>
+                                ST Depression (oldpeak)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">ST depression induced by exercise relative to rest (reflects ischemia severity).</span>
+                                </span>
+                            </label>
+                            <div class="slider-container">
+                                <input type="range" id="oldpeak" name="oldpeak" min="0" max="6.2" step="0.1" value="0.0">
+                                <span class="slider-value" id="oldpeakVal">0.0</span>
+                            </div>
+                        </div>
+
+                        <!-- Slope -->
+                        <div class="form-group">
+                            <label>
+                                ST Slope Type
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">The slope of the peak exercise ST segment.</span>
+                                </span>
+                            </label>
+                            <select id="slope" name="slope">
+                                <option value="0">Upsloping</option>
+                                <option value="1">Flat</option>
+                                <option value="2">Downsloping</option>
+                            </select>
+                        </div>
+
+                        <!-- Ca -->
+                        <div class="form-group">
+                            <label>
+                                Major Vessels Colored (ca)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Number of major vessels (0-3) colored by fluoroscopy. Higher numbers indicate more obstruction.</span>
+                                </span>
+                            </label>
+                            <select id="ca" name="ca">
+                                <option value="0">0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                        </div>
+
+                        <!-- Thal -->
+                        <div class="form-group">
+                            <label>
+                                Thalassemia Type (thal)
+                                <span class="tooltip"><i class="fa-solid fa-circle-info info-icon"></i>
+                                    <span class="tooltip-text">Blood disorder indicator. 1 = normal; 2 = fixed defect; 3 = reversible defect.</span>
+                                </span>
+                            </label>
+                            <select id="thal" name="thal">
+                                <option value="2">Normal / Fixed Defect</option>
+                                <option value="1">Normal Flow</option>
+                                <option value="3">Reversible Defect</option>
+                                <option value="0">Null/Unspecified</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fa-solid fa-heart-circle-check"></i> Analyze Cardiovascular Risk
+                    </button>
+                </form>
+            </div>
+
+            <!-- Result Display Card -->
+            <div class="glass-panel">
+                <div class="result-panel">
+                    <!-- Default state -->
+                    <div class="result-placeholder" id="placeholder">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                        <div>
+                            <h3>Ready for Inference</h3>
+                            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.5rem;">Fill in the parameters on the left and click "Analyze Cardiovascular Risk" to see the prediction.</p>
+                        </div>
+                        
+                        <ul class="info-list">
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span><strong>Real-time API Evaluation:</strong> Sends inputs instantly to Flask endpoint.</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span><strong>Random Forest Classifier:</strong> High accuracy model verified at >99% test accuracy.</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-circle-check"></i>
+                                <span><strong>Explainable Indicators:</strong> Leverages clinical measurements.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Loading State -->
+                    <div class="spinner" id="spinner"></div>
+                    <div class="loading-text" id="loadingText">Running predictive modeling algorithms...</div>
+
+                    <!-- Result: Healthy -->
+                    <div class="result-card healthy" id="healthyCard">
+                        <div class="result-icon">
+                            <i class="fa-regular fa-circle-check"></i>
+                        </div>
+                        <h3 class="result-title">No Heart Disease Detected</h3>
+                        <p class="result-description">The model predicts that the patient does not present significant clinical signs of cardiovascular disease based on the provided diagnostic metrics.</p>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Prediction</span>
+                                <span class="metric-value" style="color: var(--success);">Healthy</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Confidence Score</span>
+                                <span class="metric-value" id="healthyConfidence">0.00%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result: Risk -->
+                    <div class="result-card at-risk" id="riskCard">
+                        <div class="result-icon">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <h3 class="result-title">Heart Disease Detected</h3>
+                        <p class="result-description">WARNING: The predictive model indicates a high risk of cardiovascular disease. The patient should seek professional medical evaluation and confirmatory diagnostics.</p>
+                        
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Prediction</span>
+                                <span class="metric-value" style="color: var(--danger);">At Risk</span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Risk Probability</span>
+                                <span class="metric-value" id="riskConfidence">0.00%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script to handle slider updates and form submission -->
+    <script>
+        // Update slider numeric readouts dynamically
+        const sliders = ['age', 'trestbps', 'chol', 'thalach', 'oldpeak'];
+        sliders.forEach(id => {
+            const el = document.getElementById(id);
+            const valEl = document.getElementById(id + 'Val');
+            if (el && valEl) {
+                el.addEventListener('input', () => {
+                    valEl.textContent = el.value;
+                });
+            }
+        });
+
+        // Set GitHub link to current domain origin/repository if loaded dynamically
+        const pathArray = window.location.pathname.split('/');
+        document.getElementById('githubLink').href = window.location.origin;
+
+        // Handle prediction form submission
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const placeholder = document.getElementById('placeholder');
+            const spinner = document.getElementById('spinner');
+            const loadingText = document.getElementById('loadingText');
+            const healthyCard = document.getElementById('healthyCard');
+            const riskCard = document.getElementById('riskCard');
+
+            // Hide cards and show spinner
+            placeholder.style.display = 'none';
+            healthyCard.style.display = 'none';
+            riskCard.style.display = 'none';
+            spinner.style.display = 'block';
+            loadingText.style.display = 'block';
+
+            // Gather values
+            const payload = {
+                age: parseInt(document.getElementById('age').value),
+                sex: parseInt(document.getElementById('sex').value),
+                cp: parseInt(document.getElementById('cp').value),
+                trestbps: parseInt(document.getElementById('trestbps').value),
+                chol: parseInt(document.getElementById('chol').value),
+                fbs: parseInt(document.getElementById('fbs').value),
+                restecg: parseInt(document.getElementById('restecg').value),
+                thalach: parseInt(document.getElementById('thalach').value),
+                exang: parseInt(document.getElementById('exang').value),
+                oldpeak: parseFloat(document.getElementById('oldpeak').value),
+                slope: parseInt(document.getElementById('slope').value),
+                ca: parseInt(document.getElementById('ca').value),
+                thal: parseInt(document.getElementById('thal').value)
+            };
+
+            try {
+                // Call API endpoint
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                // Hide spinner
+                spinner.style.display = 'none';
+                loadingText.style.display = 'none';
+
+                if (response.ok && result.status === 'success') {
+                    const probability = result.probability ? (result.probability * 100).toFixed(2) + '%' : 'N/A';
+                    const riskPercent = result.risk_score_percent ? result.risk_score_percent.toFixed(1) + '%' : probability;
+
+                    if (result.prediction === "Heart Disease Detected") {
+                        document.getElementById('riskConfidence').textContent = riskPercent;
+                        riskCard.style.display = 'block';
+                    } else {
+                        document.getElementById('healthyConfidence').textContent = (100 - parseFloat(riskPercent)).toFixed(1) + '%';
+                        healthyCard.style.display = 'block';
+                    }
+                } else {
+                    alert('Error from prediction server: ' + (result.message || 'Unknown error occurred.'));
+                    placeholder.style.display = 'flex';
+                }
+            } catch (error) {
+                console.error(error);
+                spinner.style.display = 'none';
+                loadingText.style.display = 'none';
+                alert('Connection failure to prediction API. Verify that the Flask server is running.');
+                placeholder.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
